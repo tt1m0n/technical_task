@@ -2,7 +2,19 @@
 
 #include "IFileHandler.hpp"
 
+#include <string>
+
 class MmapFileHandler : public IFileHandler {
     public:
-        uint32_t count_unique_words() override;
+        MmapFileHandler(const std::string& filename);
+        ~MmapFileHandler();
+        uint32_t CountUniqueWords() override;
+
+    private:
+        bool MapFile();
+
+    private:
+        std::string filename_;
+        const char *file_head_;
+        int fd_;
 };
