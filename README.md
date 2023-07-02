@@ -23,11 +23,11 @@ The idea is:
 [ParallelMmapRecursive](https://github.com/tt1m0n/technical_task/blob/main/include/ParallelMmapRecursive.hpp)
 Same as Main but use file mapping.
 
----
+
 size: 24MB unique_words: 2 150 000 time: 2416 ms
 size: 120MB unique_words: 2 150 000 time: 6555 ms
 size: 600MB unique_words: 2 150 000 time: 10035 ms
----
+
 
 ### Thoughts, Ideas, Drafts
 [drafts](https://github.com/tt1m0n/technical_task/blob/main/include/basic_draft_ideas.hpp)
