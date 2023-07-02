@@ -4,25 +4,63 @@
 
 #include <string>
 #include <iostream>
+#include <fstream>
+#include <unordered_set>
+#include <future>
 
-// mmap and helper need review and delete extra headers
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <sys/mman.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
+std::unordered_set<std::string> RecoursiveRountine(const std::string& filename, uint64_t start, uint64_t end, uint64_t chunk_length) {
+    const uint64_t kLength = end - start;
+    if (kLength <= chunk_length) {
+        std::ifstream ifs(filename.c_str(), std::ifstream::in);
+        ifs.seekg(start);
+        std::unordered_set<std::string> unique_words;
+        std::string word;
+        int length_count = 0;
+        while (ifs >> word) {
+            unique_words.insert(std::move(word));
+            length_count+=word.size();
+            if (length_count >= kLength) break;
+        }
 
-ParallelIfstreamRecursive::ParallelIfstreamRecursive(const std::string& filename) : filename_(filename) {
+        return std::move(unique_words);
+    }
+
+    const uint64_t kMid = start + kLength / 2;
+    std::future<std::unordered_set<std::string>> fut = std::async(std::launch::deferred | std::launch::async,
+                                                            RecoursiveRountine,
+                                                            filename,
+                                                            kMid,
+                                                            end,
+                                                            chunk_length);
+    auto unique_words = RecoursiveRountine(filename, start, kMid, chunk_length);
+    auto future_unique_res = fut.get();
+    unique_words.insert(future_unique_res.begin(), future_unique_res.end());
+    return unique_words;
 }
+
+ParallelIfstreamRecursive::ParallelIfstreamRecursive(const std::string& filename) : filename_(filename) {}
 
 ParallelIfstreamRecursive::~ParallelIfstreamRecursive() {}
 
-uint32_t MmapFileHandler::CountUniqueWords() {
-    if (MapFile() == false) {
-        log_message(kTypeError, __FILE__, __LINE__, "map failed");
+uint32_t ParallelIfstreamRecursive::Count() {
+    uint64_t end_position = 0;
+    {
+        std::ifstream ifs(filename_, std::ifstream::in);
+        ifs.seekg(0, std::ios::end);
+        end_position = ifs.tellg();
+    }
+    
+    uint64_t current_chunk_length = 0;
+    if (end_position < kMinChunkLength) {
+        current_chunk_length = end_position;
+    } else {
+        const uint32_t kNumOfThreadsWithMinChunk = end_position / kMinChunkLength;
+        const uint32_t kNumOfThreadsToUse = std::min(kNumOfThreadsWithMinChunk, kAllowedThreadsByHardware);
+
+        // +1 below is quick fix to reduce сreating extra threads because of several calculation of the middle
+        current_chunk_length = end_position / kNumOfThreadsToUse + 1;
     }
 
-    return 0;
+    auto final_res = RecoursiveRountine(filename_, 0, end_position, current_chunk_length);
+    return static_cast<uint32_t>(final_res.size());
 }

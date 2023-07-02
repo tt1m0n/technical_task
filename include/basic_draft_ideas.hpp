@@ -1,6 +1,6 @@
 
 /**
- * In this file I have collected basic ideas. It just my thoughts, even some of them do not use parallel computing.
+ * In this file I have collected basic draft ideas. It just my thoughts, even some of them do not use parallel computing.
  * Each of this variant can be research more deeply and can be improved.
  */
 
@@ -29,6 +29,8 @@
 using namespace std::chrono;
 
 static const int32_t kMaxUniqueWords = 1200000;
+
+namespace drafts {
 
 void print_res(const std::string& method,
     int32_t unique_words,
@@ -242,150 +244,4 @@ void paralell_ifstream_v1(const std::string& filename)
 
 }
 
-/**
- * @brief       2 Functions Below [V2] uses: ifstreams, chunks, threads, unordered_maps
- * @description The idea is:
- *              1) Split file into chunks. chunk_size = file_size / kMaxAllowThreadsOnTheSystem
- *              2) for each chunk make recursive call std::async:
- *                 2.1) open ifstream
- *                 2.2) read word by word directly from the stream until until sum of characters >= lenght.
- *                      DIFF from V1. read dirrectly instead creating string.
- *                 2.3) save into unordered_set
- *              3) merged all unordered_sets from different threads
- *              4) return size
- */
-std::unordered_set<std::string> parallel_recursive_routine_v2(const std::string& filename, uint64_t start, uint64_t end, uint64_t chunk_length) {
-    const uint64_t kLength = end - start;
-    if (kLength <= chunk_length) {
-        // std::cout << std::this_thread::get_id() << std::endl;
-
-        std::ifstream ifs(filename.c_str(), std::ifstream::in);
-        ifs.seekg(start);
-        std::unordered_set<std::string> unique_words;
-        std::string word;
-        int length_count = 0;
-        while (ifs >> word) {
-            unique_words.insert(std::move(word));
-            length_count+=word.size();
-            if (length_count >= kLength) break;
-        }
-
-        return std::move(unique_words);
-    }
-
-    const uint64_t kMid = start + kLength / 2;
-    std::future<std::unordered_set<std::string>> fut = std::async(std::launch::deferred | std::launch::async,
-                                                            parallel_recursive_routine_v2,
-                                                            filename,
-                                                            kMid,
-                                                            end,
-                                                            chunk_length);
-    auto unique_words = parallel_recursive_routine_v2(filename, start, kMid, chunk_length);
-    auto future_unique_res = fut.get();
-    unique_words.insert(future_unique_res.begin(), future_unique_res.end());
-    return unique_words;
-}
-
-void paralell_ifstream_v2(const std::string& filename)
-{
-    // start timer
-    const auto start = std::chrono::steady_clock::now();
-    uint64_t end_position = 0;
-    {
-        std::ifstream ifs(filename, std::ifstream::in);
-        ifs.seekg(0, std::ios::end);
-        end_position = ifs.tellg();
-    }
-    
-    uint64_t current_chunk_length = 0;
-    if (end_position < kMinChunkLength) {
-        current_chunk_length = end_position;
-    } else {
-        const uint32_t kNumOfThreadsWithMinChunk = end_position / kMinChunkLength;
-        const uint32_t kNumOfThreadsToUse = std::min(kNumOfThreadsWithMinChunk, kAllowedThreadsByHardware);
-
-        // +1 below is quick fix to reduce сreating extra threads because of several calculation of the middle
-        current_chunk_length = end_position / kNumOfThreadsToUse + 1;
-    }
-
-    auto final_res = parallel_recursive_routine_v2(filename, 0, end_position, current_chunk_length);
-
-    // end timer
-    const auto end = std::chrono::steady_clock::now();
-
-    print_res("paralell_ifstream_v2", final_res.size(), start, end);
-}
-
-
-/**
- * @brief       2 Functions Below [V3] uses: mmap, chunks, threads, unordered_maps
- * @description The idea is:
- *              1) Split file into chunks. chunk_size = file_size / kMaxAllowThreadsOnTheSystem
- *              2) map file
- *              2) for each chunk make recursive call std::async:
- *                 2.2) read chunk_size content into string from mapped file. DIFF fomr V1 and V2is reading from mapped file.
- *                 2.3) split string to words using istringstream and save into unordered_set
- *              3) merged all unordered_sets from different threads
- *              4) return size
- */
-std::unordered_set<std::string> parallel_recursive_routine_v3(const char* file_head, uint64_t start, uint64_t end, uint64_t chunk_length) {
-    const uint64_t kLength = end - start;
-    if (kLength <= chunk_length) {
-        // std::cout << std::this_thread::get_id() << std::endl;
-        std::istringstream ss(std::string(file_head + start, end - start));
-        std::string word;
-        std::unordered_set<std::string> unique_words;
-        while (ss >> word) {
-            unique_words.insert(std::move(word));
-        }
-
-        return std::move(unique_words);
-    }
-
-    const uint64_t kMid = start + kLength / 2;
-    std::future<std::unordered_set<std::string>> fut = std::async(std::launch::deferred | std::launch::async,
-                                                            parallel_recursive_routine_v3,
-                                                            file_head,
-                                                            kMid + 1,
-                                                            end,
-                                                            chunk_length);
-    auto unique_words = parallel_recursive_routine_v3(file_head, start, kMid, chunk_length);
-    auto future_unique_res = fut.get();
-    unique_words.insert(future_unique_res.begin(), future_unique_res.end());
-    return unique_words;
-}
-
-void paralell_ifstream_v3(const std::string& filename)
-{
-    // start timer
-    const auto start = std::chrono::steady_clock::now();
-
-    struct stat sb;
-    int fd_ = open(filename.c_str(), O_RDONLY);
-    fstat(fd_, &sb);
-    const size_t kFileSize = static_cast<size_t>(sb.st_size);
-
-    const char* kFileHead = static_cast<const char*> (mmap(NULL, sb.st_size, PROT_READ, MAP_SHARED, fd_, 0));
-    if (kFileHead == MAP_FAILED) {
-        return;
-    }
-
-    uint64_t current_chunk_length = 0;
-    if (kFileSize < kMinChunkLength) {
-        current_chunk_length = kFileSize;
-    } else {
-        const uint32_t kNumOfThreadsWithMinChunk = kFileSize / kMinChunkLength;
-        const uint32_t kNumOfThreadsToUse = std::min(kNumOfThreadsWithMinChunk, kAllowedThreadsByHardware);
-
-        // +1 below is quick fix to reduce сreating extra threads because of several calculation of the middle
-        current_chunk_length = kFileSize / kNumOfThreadsToUse + 1;
-    }
-
-    // std::cout << "current_chunk_length: " << current_chunk_length << std::endl;
-    auto final_res = parallel_recursive_routine_v3(kFileHead, 0, kFileSize, current_chunk_length);
-
-    // end timer
-    const auto end = std::chrono::steady_clock::now();
-
-    print_res("paralell_ifstream_v3", final_res.size(), start, end);
 }

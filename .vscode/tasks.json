@@ -14,7 +14,9 @@
                 "-pthread",
                 "-ltbb",
                 "-fcoroutines",
-                "src/MmapFileHandler.cpp"
+                "src/ParallelIfstreamRecursive.cpp",
+                "src/ParallelMmapRecursive.cpp",
+                "src/IUniqueWordsCounter.cpp"
             ],
             "options": {
                 "cwd": "${fileDirname}"
