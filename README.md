@@ -1,4 +1,12 @@
-# technical_task
+To build app open it with VS Code and build project. Or to quickly test you can use rady to use execution file. `main`. 
+To generate file with random words use next command:
+
+`./generate_file_with_sin_in_MB.sh 100` where 100 is ~100MB. It will generate `random_words_file.txt` file with 2,15M(const) unique words.
+`./generate_file_with_sin_in_MB.sh 30000` It will generate `random_words_file.txt` with size ~30GB. and 2,15M(const) unique words
+
+To start `main` app:
+`main` randow_words_file.txt
+
 
 ### Main Solution
 
@@ -7,8 +15,8 @@
 - size: 600MB unique_words: 2 150 000 time: 9425 ms
 - size: 2.4GB unique_words: 2 150 000 time: 20004 ms
 - size: 12.5GB unique_words: 2 150 000 time: 90976 ms
-- size: 24GB unique_words: 2 150 000 time: ~120328 ms
-- size: 36GB unique_words: 2 150 000 time: ~130374 ms
+- size: 24GB unique_words: 2 150 000 time: ~115328 ms
+- size: 36GB unique_words: 2 150 000 time: ~123374 ms
   
 [ParallelIfstreamRecursive](https://github.com/tt1m0n/technical_task/blob/main/include/ParallelIfstreamRecursive.hpp)
 The idea is:
