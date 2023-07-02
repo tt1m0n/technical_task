@@ -39,9 +39,13 @@ std::unordered_set<std::string> RecoursiveRountine(const char* file_head, uint64
                                                             kMid + 1,
                                                             end,
                                                             chunk_length);
+
     auto unique_words = RecoursiveRountine(file_head, start, kMid, chunk_length);
     auto future_unique_res = fut.get();
+
+    // merge 2 containers
     unique_words.insert(future_unique_res.begin(), future_unique_res.end());
+
     return std::move(unique_words);
 }
 

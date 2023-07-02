@@ -13,8 +13,10 @@ std::unordered_set<std::string> RecoursiveRountine(const std::string& filename, 
     if (kLength <= chunk_length) {
         std::ifstream ifs(filename.c_str(), std::ifstream::in);
         ifs.seekg(start);
+
         std::unordered_set<std::string> unique_words;
         unique_words.rehash(kMaxUniqueWords);
+    
         std::string word;
         int length_count = 0;
         while (ifs >> word) {
@@ -33,10 +35,14 @@ std::unordered_set<std::string> RecoursiveRountine(const std::string& filename, 
                                                             kMid,
                                                             end,
                                                             chunk_length);
+
     auto unique_words = RecoursiveRountine(filename, start, kMid, chunk_length);
-    unique_words.rehash(2200000);
+    unique_words.rehash(kMaxUniqueWords);
     auto future_unique_res = fut.get();
+
+    // merge to containers
     unique_words.insert(future_unique_res.begin(), future_unique_res.end());
+
     return std::move(unique_words);
 }
 
