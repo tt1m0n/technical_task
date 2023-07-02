@@ -4,6 +4,16 @@
  * Each of this variant can be research more deeply and can be improved.
  */
 
+/**to call draft in mains. copy this code.
+
+    // drafts
+    // vector_sort_variant_1_thread(kFileName);
+    // unord_set_no_reserve_1_thread(kFileName);
+    // unord_set_with_reserve_1_thread(kFileName); // 17.7GB - 571017ms
+    // mmap_unord_set_with_reserve_1_thread(kFileName);
+    // paralell_ifstream_v1(kFileName); // killed by system if 17.7GB. because used std::string to save info from ifstream
+*/
+
 #include "defaults.hpp"
 #include "helpers.hpp"
 

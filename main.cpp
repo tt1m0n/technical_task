@@ -43,12 +43,5 @@ int main(int argc, char **argv) {
         show_results(type, unique_words, start, end);
     }
 
-    // drafts
-    // vector_sort_variant_1_thread(kFileName);
-    // unord_set_no_reserve_1_thread(kFileName);
-    // unord_set_with_reserve_1_thread(kFileName); // 17.7GB - 571017ms
-    // mmap_unord_set_with_reserve_1_thread(kFileName);
-    // paralell_ifstream_v1(kFileName); // killed by system if 17.7GB. because used std::string to save info from ifstream
-
     return 0;
 }
