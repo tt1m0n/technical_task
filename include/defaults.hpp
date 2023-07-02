@@ -8,8 +8,8 @@ const std::string kTypeError("error: ");
 const std::string kTypeInfo("info: ");
 
 const uint32_t kAllowedThreadsByHardware = std::thread::hardware_concurrency();
-
 const uint32_t kMinChunkLength = 10 * 1024; // 10MB
+const uint32_t kMaxUniqueWords = 2200000;
 
 enum class FileReadMethod {
     kMmapMethod = 0,

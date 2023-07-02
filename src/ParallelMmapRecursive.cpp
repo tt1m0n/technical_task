@@ -42,7 +42,7 @@ std::unordered_set<std::string> RecoursiveRountine(const char* file_head, uint64
     auto unique_words = RecoursiveRountine(file_head, start, kMid, chunk_length);
     auto future_unique_res = fut.get();
     unique_words.insert(future_unique_res.begin(), future_unique_res.end());
-    return unique_words;
+    return std::move(unique_words);
 }
 
 ParallelMmapRecursive::ParallelMmapRecursive(const std::string& filename) : filename_(filename) {

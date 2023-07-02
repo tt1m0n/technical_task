@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
 
     std::vector<CounterType> counter_types{
         CounterType::kParalellIfstreamRecursive,
-        CounterType::kParalellMmapRecursive
+        // CounterType::kParalellMmapRecursive
     };
 
     for (auto type : counter_types) {

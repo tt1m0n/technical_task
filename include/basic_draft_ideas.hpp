@@ -5,6 +5,7 @@
  */
 
 #include "defaults.hpp"
+#include "helpers.hpp"
 
 #include <filesystem>
 #include <iostream>
@@ -27,10 +28,6 @@
 #include <fcntl.h>
 
 using namespace std::chrono;
-
-static const int32_t kMaxUniqueWords = 1200000;
-
-namespace drafts {
 
 void print_res(const std::string& method,
     int32_t unique_words,
@@ -241,7 +238,5 @@ void paralell_ifstream_v1(const std::string& filename)
     const auto end = std::chrono::steady_clock::now();
 
     print_res("paralell_ifstream_v1", final_res.size(), start, end);
-
-}
 
 }
