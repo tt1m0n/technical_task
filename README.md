@@ -6,11 +6,11 @@
 The idea is:
   1) Split file into chunks.
   2) for each chunk make call std::async recursively:
-    2.1) open ifstream
-    2.2) read word by word directly from the stream until until sum of characters >= lenght.
-    2.3) save into unordered_set
-  3) merged all unordered_sets from different threads
-  4) return size
+     2.1) open ifstream
+     2.2) read word by word directly from the stream until until sum of characters >= lenght.
+     2.3) save into unordered_set
+ 3) merged all unordered_sets from different threads
+ 4) return size
 
 
 ### Second Solution
