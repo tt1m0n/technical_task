@@ -95,3 +95,14 @@ In this file I just wanted to show some part of my thoughts while trying to find
 4) we can more play with package_task, thread pools, consumer-producer logic (some threads save info to stack/queue of unordered sets, another threads merging them). Great book to read. [C++ Concurrency in Action](https://www.amazon.com/C-Concurrency-Action-Practical-Multithreading/dp/1933988770). Great course-video to watch [Modern C++ Concurrency in Depth ( C++17/20)](https://ciklum.udemy.com/course/modern-cpp-concurrency-in-depth/learn/lecture/7670484#overview)
 5) think about I/O bound, CPU bound
 6) Use another container instead of hashmap. For example Trie.
+
+### Useful Links:
+
+- [Want fast C++? Know your hardware!](https://www.youtube.com/watch?v=BP6NxVxDQIs&t=0)
+- [Explanation and thoughts about this task](https://levelup.gitconnected.com/complex-solution-to-a-dead-simple-concurrency-task-5a66ae21e3b)
+- [What do t he term i/o and cpu bound mean](https://stackoverflow.com/questions/868568/what-do-the-terms-cpu-bound-and-i-o-bound-mean/33510470#33510470)
+- [reddit discussion about mmap](https://www.reddit.com/r/cpp/comments/ng9xz1/fastest_way_to_read_very_large_filegb_to_tb_in_c/)
+- [using c++ containers efficiently](https://blog.quasar.ai/using-c-containers-efficiently)
+- [different hashmap implementation and benchmarks](https://martin.ankerl.com/2019/04/01/hashmap-benchmarks-01-overview/)
+- [Udemy course about multithreading](https://ciklum.udemy.com/course/modern-cpp-concurrency-in-depth/learn/lecture/7670484#overview)
+- [C++ Concurrency in Action](https://www.amazon.com/C-Concurrency-Action-Practical-Multithreading/dp/1933988770)
