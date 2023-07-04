@@ -107,4 +107,4 @@ In this file I just wanted to show some part of my thoughts while trying to find
 - [Udemy course about multithreading](https://ciklum.udemy.com/course/modern-cpp-concurrency-in-depth/learn/lecture/7670484#overview)
 - [C++ Concurrency in Action](https://www.amazon.com/C-Concurrency-Action-Practical-Multithreading/dp/1933988770)
 - [Google Library Benchmark](https://github.com/google/benchmark).
-  
+- [C++20 Multithreading CppCon Anthony Williams](https://www.youtube.com/watch?v=A7sVFJLJM-A&list=PLHTh1InhhwT6c2JNtUiJkaH8YRqzhU7Ag&index=7)
