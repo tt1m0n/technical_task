@@ -8,7 +8,7 @@ You can assume that all unique words fit into memory when using the data structu
 The solution must utilize all available CPU resources.
 To build app open it with VS Code and build project. Or to quickly test you can use executable file `main` which uses `Main Solution` logic.
 
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 To generate file with random words use next command:
 
